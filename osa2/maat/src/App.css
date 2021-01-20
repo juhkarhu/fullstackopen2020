@@ -1,0 +1,8 @@
+[class^="img"] img {
+    display: block;
+}
+
+
+.image img {
+    max-width: 10%;
+}
