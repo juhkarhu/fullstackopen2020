@@ -4,6 +4,7 @@ const cors = require('cors')
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static('build'))
 
 const generateId = () => {
     const maxId = notes.length > 0
@@ -15,7 +16,7 @@ const generateId = () => {
 let notes = [
     {
         id: 1,
-        content: "HTML is easy",
+        content: "HTML is very easy",
         date: "2020-01-10T17:30:31.098Z",
         important: true
     },
