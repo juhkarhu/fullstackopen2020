@@ -1,0 +1,8 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "id": "generateId()",
+    "name": "Juhana Karhunen",
+    "number": "0504062965"
+}
