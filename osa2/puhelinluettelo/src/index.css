@@ -14,7 +14,7 @@
     margin-bottom: 10px;
 }
 
-.delete {
+.delete, .error {
     color: red;
     background: lightgrey;
     font-size: 20px;
@@ -23,3 +23,5 @@
     padding: 10px;
     margin-bottom: 10px;
 }
+
+

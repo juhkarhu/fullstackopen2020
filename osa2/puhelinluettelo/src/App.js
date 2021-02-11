@@ -40,19 +40,46 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    if (persons.filter(person => person.name === newName).length > 0) {
+    console.log(personObject)
+    // Tutkitaan onko listassa jo saman nimista henkiloa. 
+    const hit = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase()).length > 0
+    console.log(hit)
+
+    if (personObject.number.length <= 0) {
+      // console.log('tapahtuu jos number pituus pienempi tai yhtasuuri kuin nolla')
+      setClassName('error')
+      setMessage(
+        `Only a name was given, you need to specify a number as well`
+      )
+      setTimeout(() => {
+        setClassName(null)
+        setMessage(null)
+      }, 2000)
+    } else if (hit) {
+      // console.log('hit oli totta, kysytaan halutaanko paivittaa tietue')
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new number?`)) {
-        console.log('paivitetaan numero')
-        const id = persons.filter(person => person.name === personObject.name)
-        console.log(id[0])
+        
+        // ID luodaan vasta backendissa, mitas nyt.
+        // const personObject = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
+        
+        
+        
+        // console.log('paivitetaan numero')
+        const found_person = persons.filter(person => person.name.toLowerCase() === personObject.name.toLowerCase())
+        // console.log('loydetty henkilo', found_person[0])
+
+        found_person[0].number = personObject.number
+        // console.log('loydetty henkilo numeron paivityksen jalkeen', found_person[0])
+        const id = found_person[0].id
+        // console.log('loydetty id', id)
         contactService
-          .put(personObject.number, id)
+          .put(found_person[0])
           .then(() => {
             fetchPersons()
           })
         setClassName('update')
         setMessage(
-          `${id[0].name} phonenumber was updated`
+          `${found_person[0].name}'s number was updated`
         )
         setTimeout(() => {
           setClassName(null)
@@ -75,14 +102,14 @@ const App = () => {
           setNewNumber('')
           setSearchTerm('')
         })
-      setClassName('update')
-      setMessage(
-        `${personObject.name} was added to the phonebook`
-      )
-      setTimeout(() => {
-        setClassName(null)
-        setMessage(null)
-      }, 2000)
+        setClassName('update')
+        setMessage(
+          `${personObject.name} was added to the phonebook`
+        )
+        setTimeout(() => {
+          setClassName(null)
+          setMessage(null)
+        }, 2000)
     }
   }
 
@@ -94,14 +121,14 @@ const App = () => {
         .remove(id)
         .then(() => {
           fetchPersons()
-        setClassName('delete')
-        setMessage(
-          `${pers.name} was removed from the phonebook`
-        )
-        setTimeout(() => {
-          setClassName(null)
-          setMessage(null)
-        }, 2000)
+          setClassName('delete')
+          setMessage(
+            `${pers.name} was removed from the phonebook`
+          )
+          setTimeout(() => {
+            setClassName(null)
+            setMessage(null)
+          }, 2000)
         })
         .catch(error => {
           fetchPersons()
@@ -114,7 +141,7 @@ const App = () => {
             setMessage(null)
           }, 2000)
         })
-    
+
     }
   }
 
@@ -138,7 +165,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Phonebook</h1>
+      <h1>Phonebook v. 0.0.4</h1>
       <Notification message={message} className={className} />
       <SearchForm onChange={handleSearchTermChange} />
       <h2>add a new</h2>

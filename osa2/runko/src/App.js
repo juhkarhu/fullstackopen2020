@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
-import noteService from './services/notes'
 import Notification from './components/Notification'
-
-
-
+import Footer from './components/Footer'
+import noteService from './services/notes'
 
 const App = () => {
-
-  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState([]) 
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState('some error happened...')
-
-
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     noteService
@@ -23,8 +18,6 @@ const App = () => {
       })
   }, [])
 
-  // console.log('render', notes.length, 'notes')
-
   const addNote = (event) => {
     event.preventDefault()
     const noteObject = {
@@ -33,15 +26,17 @@ const App = () => {
       important: Math.random() > 0.5,
       id: notes.length + 1,
     }
+  
     noteService
       .create(noteObject)
       .then(returnedNote => {
         setNotes(notes.concat(returnedNote))
         setNewNote('')
       })
-  } 
+  }
 
   const toggleImportanceOf = (id) => {
+    const url = `http://localhost:3001/notes/${id}`
     const note = notes.find(n => n.id === id)
     const changedNote = { ...note, important: !note.important }
   
@@ -61,7 +56,6 @@ const App = () => {
   }
 
   const handleNoteChange = (event) => {
-    // console.log(event.target.value)
     setNewNote(event.target.value)
   }
 
@@ -69,21 +63,20 @@ const App = () => {
     ? notes
     : notes.filter(note => note.important)
 
-
   return (
     <div>
-      <h1>Notes</h1>
+      <h1>Notes v 0.0.1</h1>
       <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
+          show {showAll ? 'important' : 'all' }
         </button>
-      </div>
+      </div>      
       <ul>
-        {notesToShow.map(note =>
+        {notesToShow.map((note, i) => 
           <Note
-            key={note.id}
-            note={note}
+            key={i}
+            note={note} 
             toggleImportance={() => toggleImportanceOf(note.id)}
           />
         )}
@@ -95,9 +88,9 @@ const App = () => {
         />
         <button type="submit">save</button>
       </form>
-
+      <Footer />
     </div>
   )
 }
 
-export default App
+export default App 
