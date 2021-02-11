@@ -25,6 +25,7 @@ const App = () => {
       })
   }, [])
 
+
   useEffect(() => {
     contactService
       .getAll()
@@ -32,7 +33,6 @@ const App = () => {
         setPersons(initialContacts)
       })
   }, [])
-
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -58,20 +58,9 @@ const App = () => {
     } else if (hit) {
       // console.log('hit oli totta, kysytaan halutaanko paivittaa tietue')
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new number?`)) {
-        
-        // ID luodaan vasta backendissa, mitas nyt.
-        // const personObject = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
-        
-        
-        
-        // console.log('paivitetaan numero')
         const found_person = persons.filter(person => person.name.toLowerCase() === personObject.name.toLowerCase())
-        // console.log('loydetty henkilo', found_person[0])
-
         found_person[0].number = personObject.number
-        // console.log('loydetty henkilo numeron paivityksen jalkeen', found_person[0])
         const id = found_person[0].id
-        // console.log('loydetty id', id)
         contactService
           .put(found_person[0])
           .then(() => {
@@ -101,15 +90,26 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           setSearchTerm('')
+          setClassName('update')
+          setMessage(
+            `${personObject.name} was added to the phonebook`
+          )
+          setTimeout(() => {
+            setClassName(null)
+            setMessage(null)
+          }, 2000)
         })
-        setClassName('update')
-        setMessage(
-          `${personObject.name} was added to the phonebook`
-        )
-        setTimeout(() => {
-          setClassName(null)
-          setMessage(null)
-        }, 2000)
+        .catch(error => {
+          setClassName('error')
+          setMessage(
+            `${error.response.data.error}`
+          )
+          setTimeout(() => {
+            setClassName(null)
+            setMessage(null)
+          }, 4000)
+        })
+        
     }
   }
 

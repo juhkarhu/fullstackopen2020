@@ -30,6 +30,7 @@ app.get('/info', (request, response) => {
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons => {
+        // console.log(persons)
         response.json(persons)
     })
 })
@@ -48,11 +49,13 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    const body = request.body
+    const body = request.body.person
+    console.log(body)
 
     Person.findByIdAndUpdate(request.params.id, body, {new: true})
-        .then(updatedNote => {
-            response.json(updatedNote)
+        .then(updatedPerson => {
+            // console.log(updatedNo)
+            response.json(updatedPerson)
         })
         .catch(error => next(error))
 

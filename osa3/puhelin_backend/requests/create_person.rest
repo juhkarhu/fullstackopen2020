@@ -3,6 +3,6 @@ Content-Type: application/json
 
 {
     "id": "generateId()",
-    "name": "Juhana Karhunen",
-    "number": "0504062965"
+    "name": "Pekka Pekkarainen",
+    "number": "225588"
 }
