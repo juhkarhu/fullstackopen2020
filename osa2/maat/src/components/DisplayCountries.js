@@ -22,7 +22,7 @@ function DisplayCountries({ items }) {
     }
 
     if (items.length < 10 && items.length > 1) {
-      console.log('nappi')
+      // console.log('nappi')
       return (
         <ul>
           {items.map(country => (
@@ -32,6 +32,13 @@ function DisplayCountries({ items }) {
               ))}
           </ul>
         )
+    }
+    if (items.length === 0) {
+      return (
+        <p>
+          no matches
+        </p>
+      )
     }
 
     else if (items.length === 1) {
@@ -51,11 +58,11 @@ function DisplayCountries({ items }) {
                 ))}
               </ul>
               {/* Liput pienennetään 3:5 suhteessa */}
-              <img src={country.flag} width='250' height='150' />
+              <img src={country.flag} alt="flag of the country" width='250' height='150' />
             </div>
           ))}
         
-        </div>
+        </div> 
       )
     }
     // Tänne tullaan jos löydettyjä maita on alle 10 mutta enemmän kuin 1

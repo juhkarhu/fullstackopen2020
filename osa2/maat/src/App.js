@@ -13,7 +13,7 @@ function App() {
   const countriesToShow = countries.filter(country => country.name.toLowerCase().includes(searchTerm.toLowerCase()))
   const api_key = process.env.REACT_APP_API_KEY
 
-
+ 
   // const hook = () => {
   //   // console.log('maat nayta')
   //   // console.log(countriesToShow)
@@ -71,7 +71,7 @@ function App() {
     <div>
       <SearchForm onChange={handleSearchTermChange} />
       <DisplayCountries items={countriesToShow} />
-      {/* <DisplayWeather items={countriesToShow} /> */}
+      <DisplayWeather items={countriesToShow} />
 
     </div>
   )
