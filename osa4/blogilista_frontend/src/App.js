@@ -179,7 +179,7 @@ const handleSearchTermChange = (event) => {
 
 return (
   <div>
-    <h1>Blogister v. 0.0.1</h1>
+    <h1>Blogister v. 0.0.2</h1>
     <Notification message={notificationMessage} className={className} />
     <SearchForm onChange={handleSearchTermChange} />
     <h2>Add a new blog to the list</h2>
