@@ -7,35 +7,69 @@ if (process.argv.length < 3) {
 
 const password = process.argv[2]
 
-const url = `mongodb+srv://juhkarhu:${password}@cluster0.95rah.mongodb.net/note-app-test?retryWrites=true&w=majority`
+const url = `mongodb+srv://juhkarhu:${password}@cluster0.95rah.mongodb.net/note-app?retryWrites=true&w=majority`
 
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
-const noteSchema = new mongoose.Schema({
-	content: String,
-	date: Date,
-	important: Boolean,
+// const noteSchema = new mongoose.Schema({
+// 	content: String,
+// 	date: Date,
+// 	important: Boolean,
+// })
+
+// noteSchema.set('toJSON', {
+// 	transform: (document, returnedObject) => {
+// 		returnedObject.id = returnedObject._id.toString()
+// 		delete returnedObject._id
+// 		delete returnedObject._v
+// 	}
+// })
+ 
+// const Note = mongoose.model('Note', noteSchema)
+
+// const note = new Note({
+// 	content: 'Callback-functions suck',
+// 	date: new Date(),
+// 	important: true,
+// })
+
+const userSchema = mongoose.Schema({
+	username: {
+		type: String,
+		unique: true
+	},
+	name: String,
+	passwordHash: String,
+	notes: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Note'
+		}
+	],
 })
 
-noteSchema.set('toJSON', {
+userSchema.set('toJSON', {
 	transform: (document, returnedObject) => {
 		returnedObject.id = returnedObject._id.toString()
 		delete returnedObject._id
-		delete returnedObject._v
+		delete returnedObject.__v
+		delete returnedObject.passwordHash
 	}
 })
 
-const Note = mongoose.model('Note', noteSchema)
 
-const note = new Note({
-	content: 'Callback-functions suck',
-	date: new Date(),
-	important: true,
+
+const User = mongoose.model('User', userSchema)
+
+const user = new User({
+	username: 'juhkarhu',
+	name: 'Juhana Karhunen',
+	password: 'salainen'
 })
 
-note.save().then(() => {
-	console.log('note saved!')
+user.save().then(() => {
+	console.log('user saved!')
 	mongoose.connection.close()
 })
 

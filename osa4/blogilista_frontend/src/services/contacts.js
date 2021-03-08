@@ -23,11 +23,13 @@ const remove = (id) => {
   return request.then(response => response.data)
 }
 
-const put = (person) => {
-  // console.log('puttia koittamassa')
+const put = (id, blog) => {
+//   console.log('puttia koittamassa')
+//   console.log('putissa saatu id:', id, 'ja blog:', blog)
 
-  const request = axios.put(baseUrl + `/${person.id}`, {person})
+  const request = axios.put(baseUrl + `/${id}`, blog)
   return request.then(response => response.data)
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, create, remove, put }
