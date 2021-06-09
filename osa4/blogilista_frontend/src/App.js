@@ -200,7 +200,7 @@ const App = () => {
 
 	return (
 		<div>
-			<h1>Blogister v. 0.0.3</h1>
+			<h1>Blogister v. 0.0.3.1</h1>
 			<Notification message={notificationMessage} className={className} />
 			<SearchForm onChange={handleSearchTermChange} />
 			<h2>Add a new blog to the list</h2>

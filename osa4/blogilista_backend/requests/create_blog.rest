@@ -1,9 +1,0 @@
-POST http://localhost:3001/api/blogs
-Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imp1aGthcmh1IiwiaWQiOiI2MDQ2MmIzNWE5ZTJkYWU2MjdjNDhlNTQiLCJpYXQiOjE2MTUyMTE2MjF9.Yln3okMITzz3fwBxF3yW4jUJYFuVK_x-ZjXS2ZgLkFg
-
-{
-    "title": "Hakublogi",
-    "author": "Alphabet",
-    "url": "www.google.com"
-}

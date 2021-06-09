@@ -9,10 +9,8 @@ import React, {useEffect} from 'react'
 function DisplayCountries({ items }) {
  
   const handleButtonPress = (props) => {
-    console.log('nappia painettiin')
     console.log(props.nativeEvent)
     console.log(props.nativeEvent.target.id)
-    
   }
 
     if (items.length > 10) {
@@ -75,7 +73,6 @@ function DisplayCountries({ items }) {
             ))}
         </ul>
       )
-    // }
     
   }
 

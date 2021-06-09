@@ -5,11 +5,8 @@ import axios from 'axios'
 const api_key = process.env.REACT_APP_API_KEY
 
 
-
-
-
 function DisplayWeather({ items }) {
-    const [weathers, setWeathers] = useState([])
+    const [weather, setWeather] = useState([])
 
     console.log(items)
     // console.log(items[0].capital)
@@ -23,7 +20,7 @@ function DisplayWeather({ items }) {
             .then(response => {
                 // console.log(response)
                 console.log('weather promise fulfilled')
-                setWeathers(response.data)
+                setWeather(response.data)
             })
     }
     useEffect(hook, [])
@@ -41,7 +38,7 @@ function DisplayWeather({ items }) {
     //   }, [])
 
     console.log('saan naytossa')
-    console.log(weathers)
+    console.log(weather)
 
 
 

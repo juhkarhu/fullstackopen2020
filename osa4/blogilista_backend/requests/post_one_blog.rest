@@ -1,0 +1,17 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Koirat ja minä",
+    "author": "Kirsi Koira",
+    "url": "www.koirulit.fi",
+    "likes": 1222
+}
+
+
+# {
+#     "title": "Hakubaalogi",
+#     "author": "Alphabet",
+#     "url": "www.google.com",
+#     "likes": 12 
+# }

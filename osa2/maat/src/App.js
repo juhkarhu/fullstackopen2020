@@ -9,48 +9,15 @@ function App() {
 
   const [countries, setCountries] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [weathers, setWeathers] = useState([])
+  const [weather, setWeather] = useState([])
   const countriesToShow = countries.filter(country => country.name.toLowerCase().includes(searchTerm.toLowerCase()))
-  const api_key = process.env.REACT_APP_API_KEY
-
  
-  // const hook = () => {
-  //   // console.log('maat nayta')
-  //   // console.log(countriesToShow)
-  //     console.log('sää')
-  //     axios
-  //       .get('http://api.weatherstack.com/current'
-  //         + '?access_key=' +api_key
-  //         + '&query=Helsinki')
-  //     .then(response => {
-  //       console.log(response)
-  //       console.log(' weather promise fulfilled')
-  //       setWeathers(response.data)
-  //     })
-  // }
-
-
-  // useEffect(() => {
-  //   axios
-  //     .get('http://api.weatherstack.com/current'
-  //       + '?access_key=' + api_key
-  //       + '&query=Helsinki')
-  //     .then(response => {
-  //       // console.log(response)
-  //       console.log(' weather promise fulfilled')
-  //       setWeathers(response.data)
-  //     })
-  // }, [])
-
-  // useEffect(hook, [])
-  // console.log(weathers)
+  const url = 'https://restcountries.eu/rest/v2/all'
 
   useEffect(() => {
-    console.log('maiden haku')
     axios
-      .get('https://restcountries.eu/rest/v2/all')
+      .get(url)
       .then(response => {
-        // console.log('promise fulfilled')
         setCountries(response.data)
       })
   }, [])
