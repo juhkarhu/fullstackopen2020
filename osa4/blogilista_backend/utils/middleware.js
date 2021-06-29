@@ -1,4 +1,5 @@
 const logger = require('./logger')
+const User = require('../models/userModel')
 
 const requestLogger = (request, response, next) => {
 	logger.info('Method:', request.method)
@@ -39,11 +40,21 @@ const tokenExtractor = (request, response, next) => {
 	next()
 }
 
+// const userExtractor = (request, response, next) => {
+// 	const authorization = request.get('authorization')
+// 	if (authorization && authorization.toLowerCase().startsWith('bearer')) {
+// 		const id = authorization.substring(7)
+// 		console.log('awdawda', id.id)
+// 		request.user = User.findById(id)
+// 	}
+// 	next()
+// }
+
 
 
 module.exports = {
 	requestLogger,
 	unknownEndpoint,
 	errorHandler,
-	tokenExtractor
+	tokenExtractor,
 }

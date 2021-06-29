@@ -3,8 +3,8 @@ const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
-const bcrypt = require('bcrypt')
-const User = require('../models/userModel')
+// const bcrypt = require('bcrypt')
+// const User = require('../models/userModel')
 
 const Blog = require('../models/blogModel')
 
@@ -147,7 +147,7 @@ describe('after some blogs are added', () => {
 		})
 
 		test('succeeds with status code 204 if id is valid', async () => {
-			const blogsAtStart = await helper.blogsInDb()
+			// const blogsAtStart = await helper.blogsInDb()
 
 			const newBlog = {
 				title: 'Testailu Blogi',
@@ -198,13 +198,13 @@ describe('after some blogs are added', () => {
 		test('can be altered', async () => {
 			const blogsAtStart = await helper.blogsInDb()
 			const toBeUpdatedBlog = blogsAtStart[0]
-			const blogObject = {
-				title: toBeUpdatedBlog.title,
-				author: toBeUpdatedBlog.author,
-				url: toBeUpdatedBlog.url,
-				likes: toBeUpdatedBlog.likes + 1
-			}
-			console.log('1338', blogObject)
+			// const blogObject = {
+			// 	title: toBeUpdatedBlog.title,
+			// 	author: toBeUpdatedBlog.author,
+			// 	url: toBeUpdatedBlog.url,
+			// 	likes: toBeUpdatedBlog.likes + 1
+			// }
+			// console.log('1338', blogObject)
 			await api
 				.put(`/api/blogs/${toBeUpdatedBlog.id}`)
 		})
