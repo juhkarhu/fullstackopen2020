@@ -26,6 +26,8 @@ const App = () => {
 	const [password, setPassword] = useState('')
 	const [user, setUser] = useState(null)
 
+	const [loginVisible, setLoginVisible] = useState(false)
+
 
 	const fetchPosts = useCallback(() => {
 		contactService
@@ -233,24 +235,38 @@ const App = () => {
 
 	}
 
-	const handleUsernameChange = (event) => {
-		event.preventDefault()
-		setUsername(event.target.value)
-	}
+	// const handleUsernameChange = (event) => {
+	// 	event.preventDefault()
+	// 	setUsername(event.target.value)
+	// }
 
-	const handlePasswordChange = (event) => {
-		event.preventDefault()
-		setPassword(event.target.value)
-	}
+	// const handlePasswordChange = (event) => {
+	// 	event.preventDefault()
+	// 	setPassword(event.target.value)
+	// }
 
 	const loginForm = () => {
-		return <LoginForm 
-			onSubmit={handleLogin} 
-			usernameValue={username} 
-			onUsernameChange={handleUsernameChange} 
-			passwordValue={password} 
-			onPasswordChange={handlePasswordChange} 
-		/>
+		const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+		const showWhenVisible = { display: loginVisible ? '' : 'none' }
+
+		return (
+			<div>
+				<div style={hideWhenVisible}>
+					<button onClick={() => setLoginVisible(true)}>log in</button>
+				</div>
+				<div style={showWhenVisible}>
+					<LoginForm
+					username={username}
+					password={password}
+					onUsernameChange={({ target }) => setUsername(target.value)}
+					onPasswordChange={({ target }) => setPassword(target.value)}
+					handleSubmit={handleLogin}
+					/>
+					<button onClick={() => setLoginVisible(false)}>cancel</button>
+				</div>
+			</div>
+		)
+
 	}
 
 	const blogForm = () => {
@@ -285,7 +301,7 @@ const App = () => {
 
 	return (
 		<div>
-			<h1>Blogister v. 0.0.3.6.2</h1>
+			<h1>Blogister v. 0.0.3.6.3</h1>
 
 			{user === null ?
 				loginForm() :
