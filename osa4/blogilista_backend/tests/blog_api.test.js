@@ -6,6 +6,7 @@ const api = supertest(app)
 // const bcrypt = require('bcrypt')
 // const User = require('../models/userModel')
 
+
 const Blog = require('../models/blogModel')
 
 
@@ -207,6 +208,7 @@ describe('after some blogs are added', () => {
 			// console.log('1338', blogObject)
 			await api
 				.put(`/api/blogs/${toBeUpdatedBlog.id}`)
+				.expect(201)
 		})
 
 	})

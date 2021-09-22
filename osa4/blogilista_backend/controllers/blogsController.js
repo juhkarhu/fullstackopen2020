@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const blogRouter = require('express').Router()
 const Blog = require('../models/blogModel')
 const User = require('../models/userModel')
@@ -16,6 +17,7 @@ blogRouter.get('/:id', async (request, response, next) => {
 	if (blog) {
 		response.json(blog.toJSON())
 	} else {
+		next()
 		response.status(404).end()
 	}
 })
@@ -55,10 +57,10 @@ blogRouter.post('/', async (request, response) => {
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {
+	console.log('backendissa')
 	const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
 	const user = await User.findById(decodedToken.id)
-	// const user = request.user
 
 	if (!decodedToken || !user) {
 		return response.status(401).json({
@@ -72,34 +74,35 @@ blogRouter.delete('/:id', async (request, response, next) => {
 		await Blog.findByIdAndRemove(request.params.id)
 		return response.status(204).end()
 	}
+	next()
 
 
 })
 
-// blogRouter.put('/:id', async (request, response, next) => {
-// 	const body = request.body
-// 	let blog = null
-// 	if (body.title !== undefined) {
-// 		blog = {
-// 			title: body.title,
-// 			author: body.author,
-// 			url: body.url,
-// 			likes: body.likes
-// 		}
-// 	} else {
-// 		const foundBlog = await Blog.findById(request.params.id)
-// 		blog = {
-// 			title: foundBlog.title,
-// 			author: foundBlog.author,
-// 			url: foundBlog.url,
-// 			likes: foundBlog.likes + 1
-// 		}
-// 	}
-// 	await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-// 		.then(updatedBlog => {
-// 			response.json(updatedBlog.toJSON())
-// 		})
-// 		.catch(error => next(error))
-// })
+blogRouter.put('/:id', async (request, response, next) => {
+	const body = request.body
+	let blog = null
+	if (body.title !== undefined) {
+		blog = {
+			title: body.title,
+			author: body.author,
+			url: body.url,
+			likes: body.likes
+		}
+	} else {
+		const foundBlog = await Blog.findById(request.params.id)
+		blog = {
+			title: foundBlog.title,
+			author: foundBlog.author,
+			url: foundBlog.url,
+			likes: foundBlog.likes + 1
+		}
+	}
+	await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+		.then(updatedBlog => {
+			response.status(201).json(updatedBlog.toJSON())
+		})
+		.catch(error => next(error))
+})
 
 module.exports = blogRouter

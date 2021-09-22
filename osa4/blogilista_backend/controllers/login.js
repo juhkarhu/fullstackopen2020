@@ -28,6 +28,7 @@ loginRouter.post('/', async (request, response) => {
 		userForToken,
 		process.env.SECRET,
 		{ expiresIn: 60*60 }
+		// 60 sec * 60 sec = 1 hour
 	)
 
 	response

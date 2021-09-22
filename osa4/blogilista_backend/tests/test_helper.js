@@ -1,9 +1,7 @@
 const Blog = require('../models/blogModel')
 const User = require('../models/userModel')
 
-const _ = require('lodash')
-
-// @ Palaa tehtäviin 4.6 ja 4.7
+// const _ = require('lodash')
 
 const initialBlogs = [
 	{
@@ -62,7 +60,7 @@ const blogsInDb = async () => {
 }
 
 const totalLikes = (blogs) => {
-	let size = _.size(blogs)
+	// let size = _.size(blogs)
 	// let size = _.keys(blogs).length
 	var likes = blogs.reduce((sum, blog) => sum + blog.likes, 0)
 	return likes
@@ -84,5 +82,5 @@ module.exports = {
 	blogsInDb,
 	totalLikes,
 	favoriteBlog,
-	usersInDb
+	usersInDb,
 }
