@@ -4,6 +4,9 @@ import AddBlogForm from './components/AddBlogForm'
 import DisplayBlog from './components/DisplayBlog'
 import contactService from './services/contacts'
 import Notification from './components/Notification'
+import loginService from './services/login'
+
+import LoginForm from './components/LoginForm'
 
 
 const App = () => {
@@ -18,6 +21,10 @@ const App = () => {
 	const [searchTerm, setSearchTerm] = useState('')
 	const blogsToShow = blogs.filter(blog => blog.title.toLowerCase().includes(searchTerm.toLowerCase()))
 	const [className, setClassName] = useState(null)
+
+	const [username, setUsername] = useState('')
+	const [password, setPassword] = useState('')
+	const [user, setUser] = useState(null)
 
 
 	const fetchPosts = useCallback(() => {
@@ -37,6 +44,15 @@ const App = () => {
 			})
 	}, [])
 
+	useEffect(() => {
+		const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+		if (loggedUserJSON) {
+			const user = JSON.parse(loggedUserJSON)
+			setUser(user)
+			contactService.setToken(user.token)
+		}
+	}, [])
+
 	const addBlog = (event) => {
 		event.preventDefault()
 		const blogObject = {
@@ -49,23 +65,10 @@ const App = () => {
 		// Tässä voisi tutkia onko listassa jo saman nimista blogia. 
 		const hit = blogs.filter(blog => blog.title.toLowerCase() === newTitle.toLowerCase())
 
-		console.log('tämä on hit', hit[0])
+		// console.log('tämä on hit', hit[0])
 
-		// Jos jokin kentistä on tyhjä, niin tehdään seuraavat. 
-		// if (blogObject.number.length <= 0) {
-		//   setClassName('error')
-		//   setNotificationMessage(
-		//     `Only a name was given, you need to specify a number as well`
-		//   )
-		//   setTimeout(() => {
-		//     setClassName(null)
-		//     setNotificationMessage(null)
-		//   }, 2000)
-		// } else 
-
-		// Jos tietokannassa oli jo tän niminen blogi, niin mitäs siitä voisikaan päivitellä.
 		if (hit[0]) {
-			console.log('jos hit[0] on truthy')
+			// console.log('jos hit[0] on truthy')
 			setClassName('error')
 			setNotificationMessage(
 				`A blog by the name ${hit[0].title} is already on Blogister.`
@@ -111,18 +114,16 @@ const App = () => {
 	}
 
 	const toggleLike = (id) => {
-		console.log('blog no ' + id + ' needs to be liked')
+		// console.log('blog no ' + id + ' needs to be liked')
 		const hits = blogs.filter(blog => blog.id === id)
 		const likedBlog = hits[0]
-		// console.log('blogi josta pidettiin', likedBlog)
+
 		const blogObject = {
 			title: likedBlog.title,
 			author: likedBlog.author,
 			url: likedBlog.url,
 			likes: likedBlog.likes + 1
 		}
-		// console.log('uusi objecti', blogObject)
-
 		contactService
 			.put(id, blogObject)
 			.then(() => {
@@ -195,27 +196,107 @@ const App = () => {
 		setSearchTerm(event.target.value.toLowerCase())
 	}
 
+	const handleLogin = async (event) => {
+		event.preventDefault()
+		//console.log('logging in with', username, password)
+		try {
+			const user = await loginService.login({
+				username, password
+			})
+			window.localStorage.setItem(
+        'loggedBlogAppUser', JSON.stringify(user)
+      ) 
+			contactService.setToken(user.token)
+			setUser(user)
+			setUsername('')
+			setPassword('')
+		} catch (exception) {
+			setClassName('delete')
+			setNotificationMessage('wrong username or password')
+			setTimeout(() => {
+				setClassName(null)
+				setNotificationMessage(null)
+			}, 5000)
+		}
+	}
 
+	const handleLogout = async (event) => {
+		event.preventDefault()
+		console.log('logging out with the username', username)
+		localStorage.clear()
+		setClassName('update')
+		setNotificationMessage('Logged out')
+		setTimeout(() => {
+			setClassName(null)
+			setNotificationMessage(null)
+		}, 5000)
 
+	}
+
+	const handleUsernameChange = (event) => {
+		event.preventDefault()
+		setUsername(event.target.value)
+	}
+
+	const handlePasswordChange = (event) => {
+		event.preventDefault()
+		setPassword(event.target.value)
+	}
+
+	const loginForm = () => {
+		return <LoginForm 
+			onSubmit={handleLogin} 
+			usernameValue={username} 
+			onUsernameChange={handleUsernameChange} 
+			passwordValue={password} 
+			onPasswordChange={handlePasswordChange} 
+		/>
+	}
+
+	const blogForm = () => {
+		return (
+			<div>
+				<SearchForm onChange={handleSearchTermChange} />
+				<h2>Add a new blog to the list</h2>
+				<AddBlogForm 
+					onSubmit={addBlog} 
+					titleValue={newTitle} 
+					onTitleChange={handleTitleChange} 
+					authorValue={newAuthor} 
+					onAuthorChange={handleAuthorChange} 
+					urlValue={newUrl} 
+					onUrlChange={handleUrlChange} 
+				/>
+				<h2>Blogs</h2>
+				<ul>
+					{blogsToShow.map(blog => (
+						<DisplayBlog
+							key={blog.id}
+							blog={blog}
+							toggleLike={() => toggleLike(blog.id)}
+							toggleDelete={() => toggleDelete(blog.id)}
+						/>
+					))}
+				</ul>
+			</div>
+
+		)
+	}
 
 	return (
 		<div>
-			<h1>Blogister v. 0.0.3.1</h1>
+			<h1>Blogister v. 0.0.3.6.2</h1>
+
+			{user === null ?
+				loginForm() :
+				<div>
+					<p>Logged in as: {user.name} <button onClick={handleLogout}>logout</button></p> 
+					{blogForm()}
+				</div>
+			}
+
 			<Notification message={notificationMessage} className={className} />
-			<SearchForm onChange={handleSearchTermChange} />
-			<h2>Add a new blog to the list</h2>
-			<AddBlogForm onSubmit={addBlog} titleValue={newTitle} onTitleChange={handleTitleChange} authorValue={newAuthor} onAuthorChange={handleAuthorChange} urlValue={newUrl} onUrlChange={handleUrlChange} />
-			<h2>Blogs</h2>
-			<ul>
-				{blogsToShow.map(blog => (
-					<DisplayBlog
-						key={blog.id}
-						blog={blog}
-						toggleLike={() => toggleLike(blog.id)}
-						toggleDelete={() => toggleDelete(blog.id)}
-					/>
-				))}
-			</ul>
+
 		</div>
 	)
 

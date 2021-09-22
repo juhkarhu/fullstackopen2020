@@ -3,7 +3,7 @@ import React from 'react'
 const LoginForm = (props) => (
   <form onSubmit={props.onSubmit}>
     <div>
-      username:
+      username
         <input
         type="text"
         value={props.usernameValue}

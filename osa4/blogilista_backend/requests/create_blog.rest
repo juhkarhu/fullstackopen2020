@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imp1aG5hIiwiaWQiOiI2MGQ4NmU4ZDY4YTQ1ODFjYWYzZDdjZDkiLCJpYXQiOjE2MjQ5MDMwMDcsImV4cCI6MTYyNDkwNjYwN30.G_A5jEuhLSKi7VZD0q_YX5wmk-vNgeAsabv6ve5ahlo
+
+{
+    "title": "Murinaa Mahassa",
+    "author": "Matti Murkina",
+    "url": "www.murinaamahassa.fi",
+    "likes": "70"
+}
