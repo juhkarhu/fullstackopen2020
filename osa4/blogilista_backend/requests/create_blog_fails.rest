@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imp1aG5hIiwiaWQiOiI2MGQ4NmU4ZDY4YTQ1ODFjYWYzZDdjZDkiLCJpYXQiOjE2MjQ3OTY5MDN9.Svccb897qMXjzTA_fA38xIf16sMyP8bF-aD8ZvcERPM
+
+{
+    "author": "Salla Sudoku",
+    "url": "www.sudokuonparasta.fi",
+    "likes": "7"
+}
