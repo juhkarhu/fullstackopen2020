@@ -29,8 +29,6 @@ const App = () => {
 
 	const [user, setUser] = useState(null)
 
-	// const [loginVisible, setLoginVisible] = useState(false)
-
 
 	const fetchPosts = useCallback(() => {
 		contactService
@@ -67,13 +65,10 @@ const App = () => {
 		}
 		console.log(blogObject)
 
-		// Tässä voisi tutkia onko listassa jo saman nimista blogia. 
+		// Checks if a blog with the same already exists
 		const hit = blogs.filter(blog => blog.title.toLowerCase() === newTitle.toLowerCase())
 
-		// console.log('tämä on hit', hit[0])
-
 		if (hit[0]) {
-			// console.log('jos hit[0] on truthy')
 			setClassName('error')
 			setNotificationMessage(
 				`A blog by the name ${hit[0].title} is already on Blogister.`
@@ -86,7 +81,6 @@ const App = () => {
 			setNewAuthor('')
 			setNewUrl('')
 			setSearchTerm('')
-			// hit = null
 		} else {
 			contactService
 				.create(blogObject)
@@ -170,7 +164,7 @@ const App = () => {
 					fetchPosts()
 					setClassName('delete')
 					setNotificationMessage(
-						`Information of ${blog.title} has already been removed from the server.`
+						`Error has occurred. Could not delete ${blog.title}.`
 					)
 					setTimeout(() => {
 						setClassName(null)

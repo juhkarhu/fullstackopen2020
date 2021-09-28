@@ -33,10 +33,18 @@ const create = async newObject => {
 //   return request.then(response => response.data)
 // }
 
-const remove = (id) => {
+const remove = async (id) => {
   console.log('tassa', id)
-  const request = axios.delete(baseUrl + `/${id}`)
-  return request.then(response => response.data)
+  const config = {
+    headers: { Authorization: token},
+  }
+
+  // Old method I guess, check
+  // const request = axios.delete(baseUrl + `/${id}`)
+  // return request.then(response => response.data)
+
+  const response = await axios.delete(baseUrl + `/${id}`, config)
+  return response.data
 }
 
 const put = (id, blog) => {

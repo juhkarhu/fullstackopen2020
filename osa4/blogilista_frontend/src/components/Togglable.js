@@ -9,7 +9,6 @@ const Togglable = (props) => {
   const toggleVisibility = () => {
     setVisible(!visible)
   }
-  console.log('togglablessa')
 
   return (
     <div>
