@@ -2,11 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react'
 import SearchForm from './components/SearchForm'
 import AddBlogForm from './components/AddBlogForm'
 import DisplayBlog from './components/DisplayBlog'
-import contactService from './services/contacts'
 import Notification from './components/Notification'
-import loginService from './services/login'
-
 import LoginForm from './components/LoginForm'
+
+import Togglable from './components/Togglable'
+
+import loginService from './services/login'
+import contactService from './services/contacts'
 
 
 const App = () => {
@@ -24,9 +26,10 @@ const App = () => {
 
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
+
 	const [user, setUser] = useState(null)
 
-	const [loginVisible, setLoginVisible] = useState(false)
+	// const [loginVisible, setLoginVisible] = useState(false)
 
 
 	const fetchPosts = useCallback(() => {
@@ -206,8 +209,8 @@ const App = () => {
 				username, password
 			})
 			window.localStorage.setItem(
-        'loggedBlogAppUser', JSON.stringify(user)
-      ) 
+				'loggedBlogAppUser', JSON.stringify(user)
+			)
 			contactService.setToken(user.token)
 			setUser(user)
 			setUsername('')
@@ -235,6 +238,7 @@ const App = () => {
 
 	}
 
+	// These are done directly in const loginForm
 	// const handleUsernameChange = (event) => {
 	// 	event.preventDefault()
 	// 	setUsername(event.target.value)
@@ -245,44 +249,36 @@ const App = () => {
 	// 	setPassword(event.target.value)
 	// }
 
-	const loginForm = () => {
-		const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-		const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
-		return (
-			<div>
-				<div style={hideWhenVisible}>
-					<button onClick={() => setLoginVisible(true)}>log in</button>
-				</div>
-				<div style={showWhenVisible}>
-					<LoginForm
-					username={username}
-					password={password}
-					onUsernameChange={({ target }) => setUsername(target.value)}
-					onPasswordChange={({ target }) => setPassword(target.value)}
-					handleSubmit={handleLogin}
-					/>
-					<button onClick={() => setLoginVisible(false)}>cancel</button>
-				</div>
-			</div>
-		)
-
-	}
+	const loginForm = () => (
+		<Togglable buttonLabel='log in'>
+			<LoginForm
+				username={username}
+				password={password}
+				onUsernameChange={({ target }) => setUsername(target.value)}
+				onPasswordChange={({ target }) => setPassword(target.value)}
+				handleSubmit={handleLogin}
+			/>
+		</Togglable>
+	)
 
 	const blogForm = () => {
 		return (
 			<div>
 				<SearchForm onChange={handleSearchTermChange} />
 				<h2>Add a new blog to the list</h2>
-				<AddBlogForm 
-					onSubmit={addBlog} 
-					titleValue={newTitle} 
-					onTitleChange={handleTitleChange} 
-					authorValue={newAuthor} 
-					onAuthorChange={handleAuthorChange} 
-					urlValue={newUrl} 
-					onUrlChange={handleUrlChange} 
-				/>
+
+				<Togglable buttonLabel='new blog'>
+					<AddBlogForm
+						onSubmit={addBlog}
+						titleValue={newTitle}
+						onTitleChange={handleTitleChange}
+						authorValue={newAuthor}
+						onAuthorChange={handleAuthorChange}
+						urlValue={newUrl}
+						onUrlChange={handleUrlChange}
+					/>
+				</Togglable>
+
 				<h2>Blogs</h2>
 				<ul>
 					{blogsToShow.map(blog => (
@@ -301,12 +297,12 @@ const App = () => {
 
 	return (
 		<div>
-			<h1>Blogister v. 0.0.3.6.3</h1>
+			<h1>Blogister v. 0.0.3.7.2</h1>
 
 			{user === null ?
 				loginForm() :
 				<div>
-					<p>Logged in as: {user.name} <button onClick={handleLogout}>logout</button></p> 
+					<p>Logged in as: {user.name} <button onClick={handleLogout}>logout</button></p>
 					{blogForm()}
 				</div>
 			}
