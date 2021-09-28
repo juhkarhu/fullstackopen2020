@@ -57,10 +57,10 @@ blogRouter.post('/', async (request, response) => {
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {
-	console.log('backendissa')
-	const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
+	const decodedToken = jwt.verify(request.token, process.env.SECRET)
 	const user = await User.findById(decodedToken.id)
+
 
 	if (!decodedToken || !user) {
 		return response.status(401).json({
@@ -75,7 +75,6 @@ blogRouter.delete('/:id', async (request, response, next) => {
 		return response.status(204).end()
 	}
 	next()
-
 
 })
 
