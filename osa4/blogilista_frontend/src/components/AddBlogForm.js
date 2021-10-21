@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-const AddPersonForm = ({onSubmit, titleValue, onTitleChange, authorValue, onAuthorChange, urlValue, onUrlChange}) => (
+const AddPersonForm = ({ onSubmit, titleValue, onTitleChange, authorValue, onAuthorChange, urlValue, onUrlChange }) => (
     <form onSubmit={onSubmit}>
         <div>
             Title: <input value={titleValue} onChange={onTitleChange} />

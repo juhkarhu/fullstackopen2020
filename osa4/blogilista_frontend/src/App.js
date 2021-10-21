@@ -56,6 +56,7 @@ const App = () => {
 		}
 	}, [])
 
+
 	const addBlog = (event) => {
 		event.preventDefault()
 		const blogObject = {
@@ -142,7 +143,6 @@ const App = () => {
 
 	}
 
-
 	const toggleDelete = (id) => {
 		console.log('blog no ' + id + ' needs to be deleted')
 		const blog = blogsToShow.find(person => person.id === id)
@@ -221,8 +221,9 @@ const App = () => {
 
 	const handleLogout = async (event) => {
 		event.preventDefault()
-		console.log('logging out with the username', username)
+		//console.log('logging out with the username', username)
 		localStorage.clear()
+		window.location.reload()
 		setClassName('update')
 		setNotificationMessage('Logged out')
 		setTimeout(() => {
