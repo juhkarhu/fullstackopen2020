@@ -38,7 +38,6 @@ const App = () => {
 			})
 	}, [])
 
-
 	useEffect(() => {
 		contactService
 			.getAll()
@@ -64,7 +63,7 @@ const App = () => {
 			author: newAuthor,
 			url: newUrl
 		}
-		console.log(blogObject)
+		// *console.log(blogObject)
 
 		// Checks if a blog with the same already exists
 		const hit = blogs.filter(blog => blog.title.toLowerCase() === newTitle.toLowerCase())
@@ -197,7 +196,7 @@ const App = () => {
 
 	const handleLogin = async (event) => {
 		event.preventDefault()
-		//console.log('logging in with', username, password)
+		//console.log('logging in with', username)
 		try {
 			const user = await loginService.login({
 				username, password
@@ -233,17 +232,6 @@ const App = () => {
 
 	}
 
-	// These are done directly in const loginForm
-	// const handleUsernameChange = (event) => {
-	// 	event.preventDefault()
-	// 	setUsername(event.target.value)
-	// }
-
-	// const handlePasswordChange = (event) => {
-	// 	event.preventDefault()
-	// 	setPassword(event.target.value)
-	// }
-
 	const loginForm = () => (
 		<Togglable buttonLabel='log in'>
 			<LoginForm
@@ -262,7 +250,7 @@ const App = () => {
 				<SearchForm onChange={handleSearchTermChange} />
 				<h2>Add a new blog to the list</h2>
 
-				<Togglable buttonLabel='new blog'>
+				<Togglable buttonLabel='Add a new blog'>
 					<AddBlogForm
 						onSubmit={addBlog}
 						titleValue={newTitle}

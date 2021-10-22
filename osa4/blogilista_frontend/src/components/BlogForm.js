@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const BlogForm = ({ onSubmit, handleChange, value}) => {
+const BlogForm = ({ onSubmit, handleChange, value }) => {
+
+  
+
   return (
     <div>
       <h2>Create a new blog</h2>
-      
+
       <form onSubmit={onSubmit}>
         <input
           value={value}
@@ -14,6 +17,7 @@ const BlogForm = ({ onSubmit, handleChange, value}) => {
       </form>
     </div>
   )
+
 }
 
 
