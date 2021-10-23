@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import SearchForm from './components/SearchForm'
-import AddBlogForm from './components/AddBlogForm'
+import AddBlogForm from './components/BlogForm'
 import DisplayBlog from './components/DisplayBlog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
@@ -15,10 +15,6 @@ const App = () => {
 
 	const [blogs, setBlogs] = useState([])
 	const [notificationMessage, setNotificationMessage] = useState(null)
-
-	const [newTitle, setNewTitle] = useState('')
-	const [newAuthor, setNewAuthor] = useState('')
-	const [newUrl, setNewUrl] = useState('')
 
 	const [searchTerm, setSearchTerm] = useState('')
 	const blogsToShow = blogs.filter(blog => blog.title.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -55,59 +51,46 @@ const App = () => {
 		}
 	}, [])
 
+	//TODO Unify all notification setters.
+	const setNotification = ({ message, type }) => {
 
-	const addBlog = (event) => {
-		event.preventDefault()
-		const blogObject = {
-			title: newTitle,
-			author: newAuthor,
-			url: newUrl
-		}
-		// *console.log(blogObject)
+		console.log(type, message)
 
+		setClassName(type)
+		setNotificationMessage(
+			`${message}`
+		)
+		setTimeout(() => {
+			setClassName(null)
+			setNotificationMessage(null)
+		}, 3000)
+
+	}
+
+	const addBlog = (blogObject) => {
 		// Checks if a blog with the same already exists
-		const hit = blogs.filter(blog => blog.title.toLowerCase() === newTitle.toLowerCase())
+		const hit = blogs.filter(blog => blog.title.toLowerCase() === blogObject.title.toLowerCase())
 
 		if (hit[0]) {
-			setClassName('error')
-			setNotificationMessage(
-				`A blog by the name ${hit[0].title} is already on Blogister.`
-			)
-			setTimeout(() => {
-				setClassName(null)
-				setNotificationMessage(null)
-			}, 2000)
-			setNewTitle('')
-			setNewAuthor('')
-			setNewUrl('')
-			setSearchTerm('')
+			setNotification({
+				message: `A blog by the name ${hit[0].title} is already on Blogister.`,
+				type: 'error'
+			})
 		} else {
 			contactService
 				.create(blogObject)
 				.then(returnedBlogs => {
 					setBlogs(blogs.concat(returnedBlogs))
-					setNewTitle('')
-					setNewAuthor('')
-					setNewUrl('')
-					setSearchTerm('')
-					setClassName('update')
-					setNotificationMessage(
-						`${blogObject.title} was added to the Blogister-list`
-					)
-					setTimeout(() => {
-						setClassName(null)
-						setNotificationMessage(null)
-					}, 2000)
+					setNotification({
+						message: `${blogObject.title} was added to the Blogister-list`,
+						type: 'update'
+					})
 				})
 				.catch(error => {
-					setClassName('error')
-					setNotificationMessage(
-						`${error.response.data.error}`
-					)
-					setTimeout(() => {
-						setClassName(null)
-						setNotificationMessage(null)
-					}, 3000)
+					setNotification({
+						message: error.response.data,
+						type: 'error'
+					})
 				})
 		}
 	}
@@ -127,14 +110,10 @@ const App = () => {
 			.put(id, blogObject)
 			.then(() => {
 				fetchPosts()
-				setClassName('update')
-				setNotificationMessage(
-					`You liked ${blogObject.title}!`
-				)
-				setTimeout(() => {
-					setClassName(null)
-					setNotificationMessage(null)
-				}, 3000)
+				setNotification({
+					message: `You liked ${blogObject.title}!`,
+					type: 'update'
+				})
 			})
 			.catch(error => {
 				console.log(error)
@@ -150,44 +129,36 @@ const App = () => {
 				.remove(id)
 				.then(() => {
 					fetchPosts()
-					setClassName('delete')
-					setNotificationMessage(
-						`${blog.title} was removed from the Blogister-list`
-					)
-					setTimeout(() => {
-						setClassName(null)
-						setNotificationMessage(null)
-					}, 2000)
+					setNotification({
+						message: `${blog.title} was removed from the Blogister-list`,
+						type: 'delete'
+					})
 				})
 				.catch(error => {
 					fetchPosts()
-					setClassName('delete')
-					setNotificationMessage(
-						`Error has occurred. Could not delete ${blog.title}.`
-					)
-					setTimeout(() => {
-						setClassName(null)
-						setNotificationMessage(null)
-					}, 2000)
+					setNotification({
+						message: `Error has occurred. Could not delete ${blog.title}.`,
+						type: 'delete'
+					})
 				})
 
 		}
 	}
 
-	const handleTitleChange = (event) => {
-		event.preventDefault()
-		setNewTitle(event.target.value)
-	}
+	// const handleTitleChange = (event) => {
+	// 	event.preventDefault()
+	// 	setNewTitle(event.target.value)
+	// }
 
-	const handleAuthorChange = (event) => {
-		event.preventDefault()
-		setNewAuthor(event.target.value)
-	}
+	// const handleAuthorChange = (event) => {
+	// 	event.preventDefault()
+	// 	setNewAuthor(event.target.value)
+	// }
 
-	const handleUrlChange = (event) => {
-		event.preventDefault()
-		setNewUrl(event.target.value)
-	}
+	// const handleUrlChange = (event) => {
+	// 	event.preventDefault()
+	// 	setNewUrl(event.target.value)
+	// }
 
 	const handleSearchTermChange = (event) => {
 		event.preventDefault()
@@ -209,12 +180,10 @@ const App = () => {
 			setUsername('')
 			setPassword('')
 		} catch (exception) {
-			setClassName('delete')
-			setNotificationMessage('wrong username or password')
-			setTimeout(() => {
-				setClassName(null)
-				setNotificationMessage(null)
-			}, 5000)
+			setNotification({
+				message: 'wrong username or password',
+				type: 'delete'
+			})
 		}
 	}
 
@@ -223,13 +192,10 @@ const App = () => {
 		//console.log('logging out with the username', username)
 		localStorage.clear()
 		window.location.reload()
-		setClassName('update')
-		setNotificationMessage('Logged out')
-		setTimeout(() => {
-			setClassName(null)
-			setNotificationMessage(null)
-		}, 5000)
-
+		setNotification({
+			message: 'Succesfully logged out',
+			type: 'update'
+		})
 	}
 
 	const loginForm = () => (
@@ -252,13 +218,13 @@ const App = () => {
 
 				<Togglable buttonLabel='Add a new blog'>
 					<AddBlogForm
-						onSubmit={addBlog}
-						titleValue={newTitle}
-						onTitleChange={handleTitleChange}
-						authorValue={newAuthor}
-						onAuthorChange={handleAuthorChange}
-						urlValue={newUrl}
-						onUrlChange={handleUrlChange}
+						createBlog={addBlog}
+					// titleValue={newTitle}
+					// onTitleChange={handleTitleChange}
+					// authorValue={newAuthor}
+					// onAuthorChange={handleAuthorChange}
+					// urlValue={newUrl}
+					// onUrlChange={handleUrlChange}
 					/>
 				</Togglable>
 
@@ -280,7 +246,7 @@ const App = () => {
 
 	return (
 		<div>
-			<h1>Blogister v. 0.0.3.7.2</h1>
+			<h1>Blogister v. 0.0.4</h1>
 
 			{user === null ?
 				loginForm() :
