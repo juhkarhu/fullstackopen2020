@@ -4,9 +4,7 @@ import AddBlogForm from './components/BlogForm'
 import DisplayBlog from './components/DisplayBlog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
-
 import Togglable from './components/Togglable'
-
 import loginService from './services/login'
 import contactService from './services/contacts'
 
@@ -26,14 +24,6 @@ const App = () => {
 	const [user, setUser] = useState(null)
 
 
-	const fetchPosts = useCallback(() => {
-		contactService
-			.getAll()
-			.then(returnedBlogs => {
-				setBlogs(returnedBlogs)
-			})
-	}, [])
-
 	useEffect(() => {
 		contactService
 			.getAll()
@@ -51,11 +41,8 @@ const App = () => {
 		}
 	}, [])
 
-	//TODO Unify all notification setters.
+
 	const setNotification = ({ message, type }) => {
-
-		console.log(type, message)
-
 		setClassName(type)
 		setNotificationMessage(
 			`${message}`
@@ -64,7 +51,6 @@ const App = () => {
 			setClassName(null)
 			setNotificationMessage(null)
 		}, 3000)
-
 	}
 
 	const addBlog = (blogObject) => {
@@ -108,8 +94,8 @@ const App = () => {
 		}
 		contactService
 			.put(id, blogObject)
-			.then(() => {
-				fetchPosts()
+			.then((returnedBlog) => {
+				setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
 				setNotification({
 					message: `You liked ${blogObject.title}!`,
 					type: 'update'
@@ -128,14 +114,14 @@ const App = () => {
 			contactService
 				.remove(id)
 				.then(() => {
-					fetchPosts()
+					const newBlogList = blogs.filter((blog => blog.id !== id))
+					setBlogs(newBlogList)
 					setNotification({
 						message: `${blog.title} was removed from the Blogister-list`,
 						type: 'delete'
 					})
 				})
 				.catch(error => {
-					fetchPosts()
 					setNotification({
 						message: `Error has occurred. Could not delete ${blog.title}.`,
 						type: 'delete'
@@ -145,20 +131,6 @@ const App = () => {
 		}
 	}
 
-	// const handleTitleChange = (event) => {
-	// 	event.preventDefault()
-	// 	setNewTitle(event.target.value)
-	// }
-
-	// const handleAuthorChange = (event) => {
-	// 	event.preventDefault()
-	// 	setNewAuthor(event.target.value)
-	// }
-
-	// const handleUrlChange = (event) => {
-	// 	event.preventDefault()
-	// 	setNewUrl(event.target.value)
-	// }
 
 	const handleSearchTermChange = (event) => {
 		event.preventDefault()
@@ -210,7 +182,7 @@ const App = () => {
 		</Togglable>
 	)
 
-	const blogForm = () => {
+	const blogAddingForm = () => {
 		return (
 			<div>
 				<SearchForm onChange={handleSearchTermChange} />
@@ -219,12 +191,6 @@ const App = () => {
 				<Togglable buttonLabel='Add a new blog'>
 					<AddBlogForm
 						createBlog={addBlog}
-					// titleValue={newTitle}
-					// onTitleChange={handleTitleChange}
-					// authorValue={newAuthor}
-					// onAuthorChange={handleAuthorChange}
-					// urlValue={newUrl}
-					// onUrlChange={handleUrlChange}
 					/>
 				</Togglable>
 
@@ -252,7 +218,7 @@ const App = () => {
 				loginForm() :
 				<div>
 					<p>Logged in as: {user.name} <button onClick={handleLogout}>logout</button></p>
-					{blogForm()}
+					{blogAddingForm()}
 				</div>
 			}
 
