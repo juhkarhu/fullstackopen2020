@@ -7,10 +7,10 @@ const setToken = newToken => {
   token = `bearer ${newToken}`
 }
 
-const getAll = () => {
-  console.log('front1')
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = async () => {
+
+  const response = await axios.get(baseUrl)
+  return response.data
 }
 
 const create = async blogObject => {
@@ -22,6 +22,29 @@ const create = async blogObject => {
   return response.data
 }
 
-const exportedObjects = { getAll, setToken, create }
+const remove = async (id) => {
+
+  const config = {
+    headers: { Authorization: token},
+  }
+
+  const response = await axios.delete(baseUrl + `/${id}`, config)
+  return response.data
+}
+
+const put = async (id, blog) => {
+
+  const config = {
+    headers: { Authorization: token},
+  }
+
+  const response = await axios.put(baseUrl + `/${id}`, blog, config)
+  return response.data
+
+  // const request = axios.put(baseUrl + `/${id}`, blog)
+  // return request.then(response => response.data)
+}
+
+const exportedObjects = { getAll, setToken, create, put, remove }
 
 export default exportedObjects

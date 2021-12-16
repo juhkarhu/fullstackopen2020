@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import DisplayBlog from './components/DisplayBlog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
-import AddBlogForm from './components/AddBlogForm'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
 
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [className, setClassName] = useState(null)
@@ -25,9 +21,12 @@ const App = () => {
 
 
   useEffect(() => {
-    console.log('effecthook pyörähtää, kaikki blogit haetaan')
+    console.log('useEffect pyörähtää')
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      // setBlogs(blogs)
+      setBlogs(blogs.sort(function(a, b) {
+        return a.likes - b.likes
+      }))
     )
   }, [])
 
@@ -76,73 +75,89 @@ const App = () => {
     window.location.reload()
   }
 
-  const handleTitleChange = (event) => {
-    event.preventDefault()
-    setNewTitle(event.target.value)
+  const setNotification = ({ message, type }) => {
+    setClassName(type)
+    setNotificationMessage(
+      `${message}`
+    )
+    setTimeout(() => {
+      setClassName(null)
+      setNotificationMessage(null)
+    }, 3000)
   }
 
-  const handleAuthorChange = (event) => {
-    event.preventDefault()
-    setNewAuthor(event.target.value)
-  }
 
-  const handleUrlChange = (event) => {
-    event.preventDefault()
-    setNewUrl(event.target.value)
-  }
-
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
-    const hit = blogs.filter(blog => blog.title.toLowerCase() === newTitle.toLowerCase())
-
-    if (hit[0]) {
-      setClassName('error')
-      setNotificationMessage(
-        `A blog by the name ${hit[0].title} is already on Blogister.`
-      )
-      setTimeout(() => {
-        setClassName(null)
-        setNotificationMessage(null)
-      }, 2000)
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
-    } else {
-      blogService
+  const createBlog = async (blogObject) => {
+    try {
+      const createdBlog = await blogService
         .create(blogObject)
-        .then(returnedBlogs => {
-          setBlogs(blogs.concat(returnedBlogs))
-          setNewTitle('')
-          setNewAuthor('')
-          setNewUrl('')
-          setClassName('update')
-          setNotificationMessage(
-            `${blogObject.title} was added to the Blogister-list`
-          )
-          setTimeout(() => {
-            setClassName(null)
-            setNotificationMessage(null)
-          }, 2000)
-        })
-        .catch(error => {
-          setClassName('error')
-          setNotificationMessage(
-            `${error.response.data.error}`
-          )
-          setTimeout(() => {
-            setClassName(null)
-            setNotificationMessage(null)
-          }, 3000)
-        })
-    }
+      console.log('returned and created blog from backend:', createdBlog)
+      setBlogs(blogs.concat(createdBlog).sort(function(a, b) {
+        return a.likes - b.likes
+      }))
+      setNotification({
+        message: `${blogObject.title} was added to the Blogister-list`,
+        type: 'update'
+      })
+    } catch (exception) {
+      setNotification({
+        message: `Cannot add ${blogObject.title}`,
+        type: 'error'
+      })
 
+
+    }
   }
+
+
+  const updateBlog = async (blogToUpdate) => {
+    console.log('blogs', blogs)
+    console.log('1', blogToUpdate)
+    try {
+      const updatedBlog = await blogService
+        .put(blogToUpdate.id, blogToUpdate)
+
+      setBlogs(blogs.map(blog => blog.id !== blogToUpdate.id ? blog : updatedBlog).sort(function(a, b) {
+        return a.likes - b.likes
+      }))
+      setNotification({
+        message: `You liked ${blogToUpdate.title}!`,
+        type: 'update'
+      })
+    } catch (exception) {
+      setNotification({
+        message: `Could not update the ${blogToUpdate.title} blog.`,
+        type: 'delete'
+      })
+    }
+  }
+
+  const removeBlog = async (blogToBeRemoved) => {
+    console.log('1')
+    try {
+      console.log('tryssa')
+      if (window.confirm(`Delete ${blogToBeRemoved.title} ?`)) {
+        console.log('window confirmed')
+        blogService
+          .remove(blogToBeRemoved.id)
+        console.log('request fulfilled')
+        setBlogs(blogs.filter((blog => blog.id !== blogToBeRemoved.id)).sort(function(a, b) {
+          return a.likes - b.likes
+        }))
+        setNotification({
+          message: `${blogToBeRemoved.title} was removed from the Blogister-list`,
+          type: 'delete'
+        })
+      }
+    } catch (exception) {
+      console.log('HOL UP')
+      setNotification({
+        message: `Error has occurred. Could not delete ${blogToBeRemoved.title}.`,
+        type: 'delete'
+      })
+    }
+  }
+
 
 
   const loginForm = () => (
@@ -157,26 +172,17 @@ const App = () => {
     </Togglable>
   )
 
-  const blogForm = () => {
+  const blogAddingForm = () => {
     return (
       <div>
-        <Togglable buttonLabel='new blog'>
-          <AddBlogForm
-            onSubmit={addBlog}
-            titleValue={newTitle}
-            onTitleChange={handleTitleChange}
-            authorValue={newAuthor}
-            onAuthorChange={handleAuthorChange}
-            urlValue={newUrl}
-            onUrlChange={handleUrlChange}
+        <Togglable buttonLabel='Add a new blog'>
+          <BlogForm
+            createBlog={createBlog}
           />
         </Togglable>
 
 
-        <h2>blogs</h2>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
+
       </div>
     )
   }
@@ -184,19 +190,32 @@ const App = () => {
   return (
     <div>
       <p>Blog version 0.2 (work in progress)</p>
-
+      <Notification message={notificationMessage} className={className} />
       {user === null ?
         loginForm() :
         <div>
           <p>Logged in as: {user.name} <button onClick={handleLogout}>logout</button></p>
-          {blogForm()}
+          {blogAddingForm()}
+
+          <h2>blogs</h2>
+          <ul>
+            {blogs.map(blog =>
+              <DisplayBlog
+                key={blog.id}
+                blog={blog}
+                updateBlog={updateBlog}
+                removeBlog={removeBlog}
+              />
+            )}
+          </ul>
+
+
         </div>
       }
-
-      <Notification message={notificationMessage} className={className} />
 
     </div>
   )
 }
+
 
 export default App

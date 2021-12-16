@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import SearchForm from './components/SearchForm'
 import AddBlogForm from './components/BlogForm'
 import DisplayBlog from './components/DisplayBlog'
@@ -22,6 +22,8 @@ const App = () => {
 	const [password, setPassword] = useState('')
 
 	const [user, setUser] = useState(null)
+
+	const blogFormRef = useRef()
 
 
 	useEffect(() => {
@@ -63,6 +65,7 @@ const App = () => {
 				type: 'error'
 			})
 		} else {
+			blogFormRef.current.toggleVisibility()
 			contactService
 				.create(blogObject)
 				.then(returnedBlogs => {
@@ -108,8 +111,8 @@ const App = () => {
 	}
 
 	const toggleDelete = (id) => {
-		console.log('blog no ' + id + ' needs to be deleted')
-		const blog = blogsToShow.find(person => person.id === id)
+		// console.log('blog no ' + id + ' needs to be deleted')
+		const blog = blogsToShow.find(blog => blog.id === id)
 		if (window.confirm(`Delete ${blog.title} ?`)) {
 			contactService
 				.remove(id)
@@ -182,33 +185,13 @@ const App = () => {
 		</Togglable>
 	)
 
-	const blogAddingForm = () => {
-		return (
-			<div>
-				<SearchForm onChange={handleSearchTermChange} />
-				<h2>Add a new blog to the list</h2>
-
-				<Togglable buttonLabel='Add a new blog'>
-					<AddBlogForm
-						createBlog={addBlog}
-					/>
-				</Togglable>
-
-				<h2>Blogs</h2>
-				<ul>
-					{blogsToShow.map(blog => (
-						<DisplayBlog
-							key={blog.id}
-							blog={blog}
-							toggleLike={() => toggleLike(blog.id)}
-							toggleDelete={() => toggleDelete(blog.id)}
-						/>
-					))}
-				</ul>
-			</div>
-
-		)
-	}
+	const blogAddingForm = () => (
+		<Togglable buttonLabel='Add a new blog' ref={blogFormRef}>
+			<AddBlogForm
+				createBlog={addBlog}
+			/>
+		</Togglable>
+	)
 
 	return (
 		<div>
@@ -217,8 +200,26 @@ const App = () => {
 			{user === null ?
 				loginForm() :
 				<div>
+
 					<p>Logged in as: {user.name} <button onClick={handleLogout}>logout</button></p>
+
+					<SearchForm onChange={handleSearchTermChange} />
+
 					{blogAddingForm()}
+
+					<h2>Blogs</h2>
+
+					<ul>
+						{blogsToShow.map(blog => (
+							<DisplayBlog
+								key={blog.id}
+								blog={blog}
+								toggleLike={() => toggleLike(blog.id)}
+								toggleDelete={() => toggleDelete(blog.id)}
+							/>
+						))}
+					</ul>
+
 				</div>
 			}
 
