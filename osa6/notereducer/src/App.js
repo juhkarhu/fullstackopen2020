@@ -30,7 +30,6 @@ store.dispatch({
 const App = () => {
   return(
     <div>
-      <p>awd</p>
       <ul>
         {store.getState().map(note=>
           <li key={note.id}>
@@ -42,4 +41,4 @@ const App = () => {
   )
 }
 
-export default App
+export default App;
